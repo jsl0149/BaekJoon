@@ -6,7 +6,7 @@ function solution(A, B) {
     let cur = 0;
     
     for(let i = 0; i<B.length;i++){
-        while(true && cur < A.length){
+        while(cur < A.length){
             if(B[i] > A[cur++]){
                 answer++;
                 break;
