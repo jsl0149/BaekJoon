@@ -18,6 +18,7 @@ function solution(n, stations, w) {
         space > 0 ? dist.push(space) : null
     }
     
+    
     dist.forEach((val)=>{
         if(val % (2*w+1) === 0) answer += (val / (2*w+1));
         else answer += Math.floor(val/(2*w+1))+1;
