@@ -1,30 +1,20 @@
-function solution(k, dungeons) {
-    
-    const answer = [];
-    
-    const factorial = (arr, depth, tired) => {
-        
-        if(depth === dungeons.length){
-            answer.push(depth);
-            return;
-        }
-        
-        else{
-            
-            for(let i = 0; i<arr.length; i++){
-                const temp = [...arr.slice(0,i), ...arr.slice(i+1)];
-                if(tired >= arr[i][0]) factorial(temp, depth+1,tired - arr[i][1]);
-                else {
-                    answer.push(depth);
-                }
+function solution(k, d) {
+    const N = d.length
+    const visited = new Array(N).fill(0)
+    let ans = 0
+
+    function dfs(k, cnt){
+        ans = Math.max(cnt, ans)
+
+        for (let j = 0; j < N; j++){
+            if (k >= d[j][0] && !visited[j]){
+                visited[j] = 1
+                dfs(k - d[j][1], cnt + 1)
+                visited[j] = 0
             }
-            
         }
-        
-        
     }
-    
-    factorial(dungeons, 0, k);
-    
-    return Math.max.apply(null, answer);
+
+    dfs(k, 0)
+    return ans;
 }
