@@ -1,35 +1,30 @@
-function adventure(k, dungeons) {
-    let count = 0
-    for (let i = 0; i < dungeons.length; i++) {
-        let [need, con] = dungeons[i]
-        if (k >= need) {
-            k -= con
-            count++
-        }
-    }
-    return count
-}
 function solution(k, dungeons) {
-    var answer = 0;
-    const getPermutations= function (arr, len) {
-        const results = [];
-        if (len === 1) return arr.map((el) => [el]);
 
-        arr.forEach((fixed, index, origin) => {
-            const rest = [...origin.slice(0, index), ...origin.slice(index+1)]
-            const permutations = getPermutations(rest, len - 1);
-            const attached = permutations.map((el) => [fixed, ...el]);
-            results.push(...attached);
-        });
-        return results;
-    }
-    let candi = getPermutations(dungeons, dungeons.length)
-    for (let i = 0; i < candi.length; i++) {
-        let count = adventure(k, candi[i])
-        if (count === dungeons.length) return count
-        if (count > answer) {
-            answer = count
+    const answer = [];
+
+    const factorial = (arr, depth, tired) => {
+
+        if(depth === dungeons.length){
+            answer.push(depth);
+            return;
         }
+
+        else{
+
+            for(let i = 0; i<arr.length; i++){
+                const temp = [...arr.slice(0,i), ...arr.slice(i+1)];
+                if(tired >= arr[i][0]) factorial(temp, depth+1,tired - arr[i][1]);
+                else {
+                    answer.push(depth);
+                }
+            }
+
+        }
+
+
     }
-    return answer;
+
+    factorial(dungeons, 0, k);
+
+    return Math.max.apply(null, answer);
 }
