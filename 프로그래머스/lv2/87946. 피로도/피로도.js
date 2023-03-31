@@ -1,20 +1,35 @@
-function solution(k, d) {
-    const N = d.length
-    const visited = new Array(N).fill(0)
-    let ans = 0
-
-    function dfs(k, cnt){
-        ans = Math.max(cnt, ans)
-
-        for (let j = 0; j < N; j++){
-            if (k >= d[j][0] && !visited[j]){
-                visited[j] = 1
-                dfs(k - d[j][1], cnt + 1)
-                visited[j] = 0
-            }
+function adventure(k, dungeons) {
+    let count = 0
+    for (let i = 0; i < dungeons.length; i++) {
+        let [need, con] = dungeons[i]
+        if (k >= need) {
+            k -= con
+            count++
         }
     }
+    return count
+}
+function solution(k, dungeons) {
+    var answer = 0;
+    const getPermutations= function (arr, len) {
+        const results = [];
+        if (len === 1) return arr.map((el) => [el]);
 
-    dfs(k, 0)
-    return ans;
+        arr.forEach((fixed, index, origin) => {
+            const rest = [...origin.slice(0, index), ...origin.slice(index+1)]
+            const permutations = getPermutations(rest, len - 1);
+            const attached = permutations.map((el) => [fixed, ...el]);
+            results.push(...attached);
+        });
+        return results;
+    }
+    let candi = getPermutations(dungeons, dungeons.length)
+    for (let i = 0; i < candi.length; i++) {
+        let count = adventure(k, candi[i])
+        if (count === dungeons.length) return count
+        if (count > answer) {
+            answer = count
+        }
+    }
+    return answer;
 }
