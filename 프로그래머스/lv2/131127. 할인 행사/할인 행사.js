@@ -1,39 +1,16 @@
 function solution(want, number, discount) {
-    var answer = 0;
-    
-    const wantMap = new Map();
-    const discountMap = new Map();
-    
-    for(let i = 0; i<want.length;i++){
-        wantMap.set(want[i], number[i]);
-        discountMap[want[i]] = 0;
-    }
-    
-    const check = () => {
-        
-        let flag = true;
+    let count = 0;
+    for (let i = 0; i < discount.length - 9; i++) {
+        const slice = discount.slice(i, i+10);
 
-        for(const [key, value] of wantMap) if(value > discountMap[key]) return false;
-        
-        return true;
-        
+        let flag = true;
+        for (let j = 0; j < want.length; j++) {
+            if (slice.filter(item => item === want[j]).length !== number[j]) {
+                flag = false;
+                break;
+            }
+        }
+        if (flag) count += 1;
     }
-    
-    for(let i = 0; i<10;i++){
-        if(!discountMap[discount[i]]) discountMap[discount[i]] = 1;
-        else discountMap[discount[i]]++;
-    }
-    
-    if(check()) answer++;
-    
-    
-    for(let i = 10; i<discount.length; i++){
-        discountMap[discount[i-10]]--;
-        if(!discountMap[discount[i]]) discountMap[discount[i]] = 1;
-        else discountMap[discount[i]]++;
-        if(check()) answer++;
-    }
-    
-    
-    return answer;
+    return count;
 }
