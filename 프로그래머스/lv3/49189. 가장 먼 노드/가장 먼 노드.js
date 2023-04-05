@@ -1,41 +1,23 @@
 function solution(n, edge) {
-    var answer = 0;
-    
-    const dist = [];
-    
-    const graph = new Array(n+1).fill(0).map(()=>[]);
-    
-    edge.forEach((val)=>{
-        const [from, to] = val;
-        graph[from].push(to);
-        graph[to].push(from);
-    })
-    
-    const bfs = (start) => {
-        
-        const visited = new Array(n+1).fill(0);
-        const nodeList = [];
-        const queue = [];
-        visited[start] = 1;
-        queue.push([start, 0]);
-        
-        while(queue.length){
-            const [curNode, count] = queue.shift();
-            for(let i = 0; i<graph[curNode].length;i++){
-                const nxtNode = graph[curNode][i];
-                if(!visited[nxtNode]){
-                    visited[nxtNode] = 1;
-                    queue.push([nxtNode, count+1]);
-                    nodeList.push([nxtNode, count+1]);
-                }
-            } 
-        }
-        return nodeList;
+    const node = new Map();
+    edge.forEach(([n1,n2])=>{
+        node.has(n1)?node.get(n1).push(n2):node.set(n1,[n2]);
+        node.has(n2)?node.get(n2).push(n1):node.set(n2,[n1]);
+    });
+
+    let answer =0;
+    const que = [1];
+    while (1) {
+        [...que].forEach(q=> {
+            que.shift();
+            if (node.has(q)) {
+                node.get(q).forEach(a=>{
+                    if (node.has(a)) que.push(a);
+                });
+                node.delete(q);
+            }
+        });
+        if (!node.size) return answer;
+        answer = node.size;
     }
-    
-    const nodeList = bfs(1);
-    
-    const max = nodeList[nodeList.length-1][1];
-    
-    return nodeList.filter((val)=> val[1] === max).length;
 }
