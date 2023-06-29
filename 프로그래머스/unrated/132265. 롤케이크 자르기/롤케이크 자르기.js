@@ -1,28 +1,27 @@
 function solution(topping) {
-    var answer = 0;
-    
-    const leftSet = new Map();
-    const rightSet = new Map();
-    
-    topping.forEach((val)=>{
-        const value = rightSet.get(val);
-        if(value) rightSet.set(val, value+1);
-        else rightSet.set(val,1);
-    })
-    
-    topping.forEach((val)=>{
-        const value = rightSet.get(val);
-        if(value === 1) rightSet.delete(val);
-        else rightSet.set(val, value-1); 
-            
-        const valueLeft = leftSet.get(val);
-        if(valueLeft) leftSet.set(val, value+1);
-        else leftSet.set(val,1);
-    
-        if(leftSet.size === rightSet.size) answer++;
-        
-    })
-    
-    
+    const a = new Set()
+    const b = {}
+
+    let answer = 0;
+    let check = 0
+
+    for (let i = 0; i < topping.length; i++) {        
+        if (b[topping[i]]) {
+            b[topping[i]]++
+        } else {
+            b[topping[i]] = 1
+            check++            
+        }
+    }
+
+    for (let i = 0; i < topping.length; i++) {
+        a.add(topping[i])
+        b[topping[i]]--
+
+        if (!b[topping[i]]) check--
+        if (a.size === check) answer++
+    }
+
+
     return answer;
 }
