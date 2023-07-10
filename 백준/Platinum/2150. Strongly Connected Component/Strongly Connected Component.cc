@@ -1,80 +1,52 @@
-#include<iostream>
-#include<vector>
-#include<stack>
-#include<algorithm>
+#include <cstdio>
+#include <cstring>
+#include <stack>
+#include <vector>
 using namespace std;
-
-int vertex_num, edge_num;
-vector<vector<int>> adj;
-stack<int> st;
-vector<int> visited_order;
-vector<bool> is_scc;
-vector<vector<int>> sccs;
-int order=0;
-
-int FindSCC(int now_idx){
-  int min_order = visited_order[now_idx] = ++order;
-  int next_idx;
-  st.push(now_idx);
-
-  for(int i=0 ; i<adj[now_idx].size() ; ++i){
-    next_idx = adj[now_idx][i];
-    if(visited_order[next_idx] == -1)
-      min_order = min(min_order, FindSCC(next_idx));
-    else if(!is_scc[next_idx])
-      min_order = min(min_order, visited_order[next_idx]);
-  } 
-    //DFS 재귀 방문을 마친 후에 간선을 끊을지 검사
-  if(min_order == visited_order[now_idx]){
-    int temp;
-    vector<int> new_scc;
-    while(1){
-      temp = st.top();
-      st.pop();
-      is_scc[temp] = true;
-      new_scc.push_back(temp);
-      if(temp == now_idx)
-        break;
-    }
-
-    sccs.push_back(new_scc);
-  }
-  return min_order;
+int v, e,s,scc[10005];
+bool visit[10005];
+vector<int> edge[10005],re[10005];
+stack<int> p;
+void dfs(int cur) {
+	visit[cur] = 1;
+	for(auto i:re[cur])
+		if (!visit[i])
+			dfs(i);
+	p.push(cur);
 }
-
-bool Comp(vector<int>& va, vector<int>& vb){
-  return va[0] < vb[0];
+void dfs2(int k,int cur) {
+	visit[cur] = 1;
+	scc[cur] = k;
+	for (auto i : edge[cur])
+		if (!visit[i])
+			dfs2(k,i);
 }
-
-int main(){
-  ios_base::sync_with_stdio(0);
-  cin>>vertex_num>>edge_num;
-
-  adj = vector<vector<int>>(vertex_num+1);
-  is_scc = vector<bool>(vertex_num+1, false);
-  visited_order = vector<int>(vertex_num+1, -1);
-
-  int u,v;
-  for(int i=0; i<edge_num ; ++i){
-    cin>>u>>v;
-    adj[u].push_back(v);
-  }
-
-  for(int idx =1; idx<=vertex_num ; ++idx)
-    if(visited_order[idx] == -1)
-      FindSCC(idx);
-  
-  for(int i=0; i<sccs.size() ; ++i)
-    sort(sccs[i].begin(), sccs[i].end());
-
-  sort(sccs.begin(), sccs.end(), Comp);
-
-  cout<<sccs.size()<<"\n";
-  for(int i=0; i<sccs.size() ; ++i){
-    for(int j=0; j<sccs[i].size() ; ++j)
-      cout<<sccs[i][j]<<' ';
-    cout<<"-1\n";
-  }
-
-  return 0;
+int main() {
+	scanf("%d%d", &v, &e);
+	for (int i = 0,U,V; i < e; i++) {
+		scanf("%d%d", &U, &V);
+		edge[U].push_back(V);
+		re[V].push_back(U);
+	}
+	for(int i=1;i<=v;i++)
+		if(!visit[i])
+			dfs(i);
+	memset(visit, 0, sizeof(visit));
+	while (!p.empty()) {
+		int cur = p.top(); p.pop();
+		if (visit[cur])continue;
+		dfs2(++s,cur);
+	}
+	printf("%d\n", s);
+	for (int i = 1; i <= v; i++) {
+		if (scc[i] == -1)continue;
+		printf("%d ", i);
+		for(int j=i+1;j<=v;j++)
+			if (scc[j] == scc[i]) {
+				printf("%d ", j);
+				scc[j] = -1;
+			}
+		printf("-1\n");
+	}
+	return 0;
 }
