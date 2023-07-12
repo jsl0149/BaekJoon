@@ -6,13 +6,17 @@ function solution(n, t, m, timetable) {
         return hour * 60 + minute;
     }
     
+    const getFormattedTime = (hour, minute)=>{
+        return `${hour.toString().padStart(2,'0')}:${minute.toString().padStart(2,'0')}`;
+    }
+    
     const compare = (a,b)=>{
         const [aHour, aMinute] = a.split(':').map(Number);
         const [bHour, bMinute] = b.split(':').map(Number);
         
         const totalA = aHour * 60 + aMinute;
         const totalB = bHour * 60 + bMinute;
-        
+
         return totalA - totalB;
     }
     
@@ -37,28 +41,16 @@ function solution(n, t, m, timetable) {
         
         if(idx === shuttle.length-1){
             
-            if(start.length !== m) answer = `${shuttleHour.toString().padStart(2,'0')}:${shuttleMinute.toString().padStart(2,'0')}`;
+            if(start.length !== m) answer = getFormattedTime(shuttleHour, shuttleMinute);
             
             else{
                 const [hour, minute] = start[start.length-1].split(':').map(Number);
-                
-                if(minute === 0) answer =`${(hour-1).toString().padStart(2,'0')}:59`;
-                else answer = `${hour.toString().padStart(2,'0')}:${(minute-1).toString().padStart(2,'0')}`
-                
-            }
             
+                if(minute === 0) answer = getFormattedTime(hour-1, 59);
+                else answer = getFormattedTime(hour, minute-1);
+            }
         }
-        
     })
   
-    
     return answer;
 } 
-
-/**
-
-1. 시간 순으로 정렬
-2. 버스 도착 시간 보다 작거나 같은 도착한 사람 shift
-3. 
-
-*/
