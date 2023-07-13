@@ -13,7 +13,6 @@ function solution(storey) {
         }
         
         else if(num === 5){
-            
             if(str.length >= 2){
                 const num2 = parseInt(str[str.length-2]);
                 if(num2 >= 5){
@@ -33,9 +32,7 @@ function solution(storey) {
                 storey -=  num;
                 storey /= 10;
             }
-            
         }
-        
         else{
             answer +=  num;
             storey -=  num;
@@ -43,15 +40,5 @@ function solution(storey) {
         }
     }
     
-    
     return answer;
 }
-
-
-// 2554 -> 2550 4
-
-// 2550 -> 2500 5
-
-// 2500 -> 2000 5
-
-// 2000 -> 0 2
