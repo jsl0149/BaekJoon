@@ -3,59 +3,66 @@ function solution(key, lock) {
     
     let holes = 0;
     
-    lock.forEach((val)=>{
-        val.forEach((val2)=>{
-            !val2 ? holes++ : null;
+    lock.forEach((row)=>{
+        row.forEach((val)=>{
+            val ? null : holes++; 
         })
     })
-
+    
     const rotate = () => {
         const N = key.length-1;
-        const copy = new Array(N+1).fill(0).map(()=>new Array(N+1).fill(0));
-        
+        const temp = new Array(N+1).fill(0).map(()=>new Array(N+1).fill(0));
         for(let i = 0; i<=N;i++){
             for(let j = 0; j<=N;j++){
-                copy[i][j] = key[j][N-i];
-            } 
+                temp[j][N-i] = key[i][j];
+            }
         }
-        key = copy;
+        key = temp;
     }
     
-    const check = (curRow, curCol) => {
+   
+    const find = (curR, curC) => {
         const N = key.length;
         const M = lock.length;
+        
         let count = 0;
         
-        for(let i = 0; i<N; i++){
+        for(let i = 0; i<N;i++){
             for(let j = 0; j<N;j++){
-                const lockRow = curRow - (N - i - 1); 
-                const lockCol = curCol - (N - j - 1);
+                const lockRow = curR - (N-1) + i;
+                const lockCol = curC - (N-1) + j;
                 
-                if(lockRow < 0 || lockRow >= M || lockCol < 0 || lockCol >= M) continue;
+                if(lockRow < 0 || lockRow >=M || lockCol < 0 || lockCol >= M) continue;
                 
-                if(key[i][j] === lock[lockRow][lockCol] && key[i][j]) return;
+                if(key[i][j] === lock[lockRow][lockCol] && key[i][j]) return false;
                 
-                if(key[i][j] !== lock[lockRow][lockCol] && key[i][j]) count++; 
+                if(key[i][j] !== lock[lockRow][lockCol] && key[i][j]) count++;
                 
             }
         }
         
-        return holes === count;
+        return count === holes;
     }
- 
-    const N = key.length; 
-    const M = lock.length;
     
-
+   const N = key.length;
+   const M = lock.length;
     
     for(let k = 0; k<4;k++){
-        console.log(key);
-        for(let i = 0; i<N+M-1;i++)
+        for(let i = 0; i<N+M-1;i++){
             for(let j = 0; j<N+M-1;j++){
-                 if(check(i,j)) return true;
-            }    
+                if(find(i,j)) return true;
+            }
+        }
         rotate();
     }
-
+    
+   
     return false;
 }
+
+// 0 0 -> 0 2
+// 0 1 -> 1 2
+// 0 2 -> 2 2
+// 1 0 -> 0 1
+// 1 1 -> 1 1
+// 1 2 -> 2 1
