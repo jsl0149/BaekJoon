@@ -1,8 +1,6 @@
 function solution(n, roads, sources, destination) {
     var answer = [];
     
-    let visited = new Array(n+1).fill(0);
-    
     const dp = new Array(n+1).fill(Infinity);
     
     const graph = new Array(n+1).fill(0).map(()=>[]);
