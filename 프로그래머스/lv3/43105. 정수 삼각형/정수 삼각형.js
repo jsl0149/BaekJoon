@@ -20,7 +20,6 @@ function solution(triangle) {
             dp[i][j] += Math.max(dp[i-1][left], dp[i-1][right]);
         }
     }
-
     
     return Math.max.apply(null, dp[dp.length-1]);
 }
