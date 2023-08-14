@@ -22,7 +22,6 @@ function solution(places) {
     }
     
     const isValidPartition = (r,c) => {
-        
           let count = 0;
         
           for(let i = 0; i<4;i++){
