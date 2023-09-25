@@ -32,20 +32,12 @@ function solution(board) {
             if(board[r][c] === 'G') return dist;
             
             for(let i = 0; i<4;i++){
-                let nr = r+dr[i];
-                let nc = c+dc[i];
+                const nr = r+dr[i];
+                const nc = c+dc[i];
                 
-                while(true){
-                   if(nr < 0 || nr >= rLen || nc < 0 || nc >=cLen) break;
-                   if(board[nr][nc] === 'D') break;
-                    nr += dr[i];
-                    nc += dc[i];
-                }
-              
-                nr -= dr[i];
-                nc -= dc[i];
+                if(nr < 0 || nr >= rLen || nc < 0 || nc >=cLen) continue;
                 
-                if(!visited[nr][nc]){
+                if(!visited[nr][nc] && board[nr][nc] !== 'D'){
                     visited[nr][nc] = true;
                     queue.push([nr,nc,dist+1]);
                 }
