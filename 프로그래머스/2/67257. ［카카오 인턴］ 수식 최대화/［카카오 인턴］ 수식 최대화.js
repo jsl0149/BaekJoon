@@ -6,9 +6,13 @@ function solution(expression) {
     const operand = [['*', '+', '-'], ['*', '-', '+'], ['+', '*', '-'], ['+', '-', '*'], ['-', '+', '*'], ['-', '*', '+']];
     
     operand.forEach((val)=>{
+        
         let copyData = data.slice();
     
+       
+        
         val.forEach((oper)=>{
+            
             const stack = [];
             
             for(let i = 0; i<copyData.length; i++){
@@ -22,17 +26,23 @@ function solution(expression) {
                     stack.push(copyData[i]);
                 }
             }
+            
             copyData = stack.slice();
         })
 
        answer = Math.max(Math.abs(copyData[0]), answer);
+        
+  
     })
+    
     
     return answer;
 }
 
 function calculate(a,oper,b){
     if(oper === '*') return a * b;
+    
     if(oper === '+') return a + b;
+    
     if(oper === '-') return a - b;
 }
