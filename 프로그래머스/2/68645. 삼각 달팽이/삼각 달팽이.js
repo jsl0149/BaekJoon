@@ -1,38 +1,13 @@
 function solution(n) {
-    let answer = [];
-    
-    const arr = new Array(n).fill(0).map((val, idx)=>new Array(idx+1));
-    
-    let curR = -1;
-    let curC = 0;
-    let count = 0;
-    
-    while(n > 0){
-        for(let i = 0; i<n;i++){
-            curR++
-            count++;
-            arr[curR][curC] = count;            
-        }
-        
-        for(let i = 0; i<n-1; i++){
-            curC++;
-            count++;
-            arr[curR][curC] = count;
-        }
-        
-        for(let i =0 ;i<n-2;i++){
-            curR--;
-            curC--;
-            count++
-            arr[curR][curC] = count;
-        }
-        n-=3;
-    }
-    
-    arr.forEach((val)=>{
-        answer = [...answer, ...val];
-    })
-    
-    
-    return answer;
+  let a = Array(n).fill().map((_, i) => Array(i + 1).fill())
+  let row = -1
+  let col = 0
+  let fill = 0
+  for (let i = n; i > 0; i -= 3) {
+    a[++row][col] = ++fill
+    for (let j = 0; j < i - 1; j++) a[++row][col] = ++fill
+    for (let j = 0; j < i - 1; j++) a[row][++col] = ++fill
+    for (let j = 0; j < i - 2; j++) a[--row][--col] = ++fill
+  }
+  return a.flat()
 }
