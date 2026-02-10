@@ -1,28 +1,49 @@
-const fs = require('fs');
-const filePath = process.platform === 'linux' ? '/dev/stdin' : './input.txt';
-const input = fs.readFileSync(filePath).toString().trim().split('\n');
-const [N, M] = input[0].split(' ').map(Number);
-const visited = new Array(100010).fill(false);
-let answer = Number.MAX_SAFE_INTEGER;
+const fs = require("fs");
+const filePath = process.platform === "linux" ? "/dev/stdin" : `./input.txt`;
+const _input = fs.readFileSync(filePath).toString().trim().split("\n");
 
-const bfs = () => {
+const solution = (input) => {
+  const [subin, sister] = input[0].split(" ").map(Number);
 
-    const queue = [];
-    queue.push([N, 0]);
-   
-    while(queue.length){
-        const [N, count] = queue.shift();
-        if(N === M) return count;
-        for(let val of [N-1, N+1, N*2]){
-       
-            if(!visited[val] && val >=0 && val <=100000){
-                visited[val] = true;
-                queue.push([val, count+1]);
-            }
-        }
+  const visited = Array(100001).fill(false);
 
+  const queue = [[subin, 0]];
+  let head = 0;
+  visited[subin] = true;
+
+  while (head < queue.length) {
+    const [curSubin, time] = queue[head++];
+
+    if (curSubin === sister) {
+      console.log(time);
+      return;
     }
-}
 
+    const left = curSubin - 1;
+    const right = curSubin + 1;
+    const teleport = curSubin * 2;
 
-console.log(bfs());
+    const isValidate = (target) => {
+      if (target < 0 || target > 100000) return false;
+
+      return true;
+    };
+
+    if (!visited[right] && isValidate(right)) {
+      visited[right] = true;
+      queue.push([right, time + 1]);
+    }
+
+    if (!visited[left] && isValidate(left)) {
+      visited[left] = true;
+      queue.push([left, time + 1]);
+    }
+
+    if (!visited[teleport] && isValidate(teleport)) {
+      visited[teleport] = true;
+      queue.push([teleport, time + 1]);
+    }
+  }
+};
+
+solution(_input);
