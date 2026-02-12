@@ -1,22 +1,29 @@
-const [A, B, C] = require('fs')
-  .readFileSync('/dev/stdin')
-  .toString()
-  .trim()
-  .split(' ')
-  .map(BigInt);
+const fs = require('fs');
+const filePath = process.platform === 'linux' ? '/dev/stdin' : './input.txt';
+const _input = fs.readFileSync(filePath).toString().trim().split('\n');
 
-const solve = (power) => {
-  if (power === 1n) {
-    return A % C;
-  }
-  
-  const half = solve(power / 2n) % C;
+const solution = (input) => {
+  const [target, exp, rest] = input[0].split(' ').map(Number);
 
-  if (power % 2n) {
-    return (half * half * (A % C)) % C;
-  }
+  const power = (base, exponent) => {
+    if (exponent === 1) return BigInt(base);
 
-  return (half * half) % C;
+    if (exponent % 2 === 0) {
+      const half = BigInt(power(BigInt(base), exponent / 2) % BigInt(rest));
+      return (BigInt(half) * BigInt(half)) % BigInt(rest);
+    }
+
+    if (exponent % 2 === 1) {
+      const half = BigInt(
+        power(BigInt(base), (exponent - 1) / 2) % BigInt(rest),
+      );
+      return (BigInt(half) * BigInt(half) * BigInt(base)) % BigInt(rest);
+    }
+  };
+
+  const ans = BigInt(power(target, exp)) % BigInt(rest);
+
+  console.log(ans.toString());
 };
 
-console.log(solve(B).toString());
+solution(_input);
