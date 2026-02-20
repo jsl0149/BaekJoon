@@ -1,19 +1,20 @@
 const fs = require('fs');
 const filePath = process.platform === 'linux' ? '/dev/stdin' : './input.txt';
-const input = fs.readFileSync(filePath).toString().trim().split('\n');
-const data = input.slice(1).map(Number);
+const _input = fs.readFileSync(filePath).toString().trim().split('\n');
 
-const solution = (rope) => {
-  rope.sort((a, b) => a - b);
+const solution = (input) => {
+  const N = Number(input[0]);
+  const arr = input.slice(1).map(Number);
 
   let max = 0;
 
-  rope.forEach((val, idx) => {
-    const temp = val * (rope.length - idx);
-    if (temp > max) max = temp;
+  arr.sort((a, b) => b - a);
+
+  arr.forEach((val, idx) => {
+    max = Math.max(max, val * (idx + 1));
   });
 
   console.log(max);
 };
 
-solution(data);
+solution(_input);
