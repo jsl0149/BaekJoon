@@ -17,20 +17,14 @@ const solution = (input) => {
 
   schedule.sort(compare);
 
-  let ans = 1;
+  let ans = 0;
+  let pointer = 0;
 
-  let pointer = schedule[0][1];
-
-  for (let i = 1; i < schedule.length; i++) {
-    const [a, b] = schedule[i];
-
-    if (b === pointer && a !== b) continue;
-
-    if (a >= pointer) {
-      pointer = b;
-      ans++;
-    }
-  }
+  schedule.forEach(([start, end]) => {
+    if (start < pointer) return;
+    ans++;
+    pointer = end;
+  });
 
   console.log(ans);
 };
