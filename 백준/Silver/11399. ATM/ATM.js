@@ -1,18 +1,24 @@
 const fs = require('fs');
-const filePath = process.platform === 'linux' ? '/dev/stdin' : `./input.txt`;
-const input = fs.readFileSync(filePath).toString().trim().split('\n');
-const data = input[1].split(' ').map(Number);
+const filePath = process.platform === 'linux' ? '/dev/stdin' : './input.txt';
+const _input = fs.readFileSync(filePath).toString().trim().split('\n');
 
-let count = 0;
+const solution = (input) => {
+  const N = Number(input[0]);
+  const arr = input[1].split(' ').map(Number);
 
-data.sort((a, b) => a - b);
+  arr.sort((a, b) => a - b);
 
-data.forEach((val, idx) => {
-  let temp = 0;
-  for (let i = 0; i < idx + 1; i++) {
-    temp += data[i];
+  const dp = Array(N).fill(0);
+
+  dp[0] = arr[0];
+
+  for (let i = 1; i < N; i++) {
+    dp[i] = dp[i - 1] + arr[i];
   }
-  count += temp;
-});
 
-console.log(count);
+  const ans = dp.reduce((prev, cur) => prev + cur, 0);
+
+  console.log(ans);
+};
+
+solution(_input);
