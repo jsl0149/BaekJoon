@@ -1,38 +1,27 @@
-const fs = require("fs");
-const filePath = process.platform === "linux" ? "/dev/stdin" : "./input.txt";
-const input = fs.readFileSync(filePath).toString().trim().split("\n");
+const fs = require('fs');
+const filePath = process.platform === 'linux' ? '/dev/stdin' : './input.txt';
+const _input = fs.readFileSync(filePath).toString().trim().split('\n');
 
-const solution = (data) => {
-  const [N, M] = data[0].split(" ").map(Number);
+const solution = (input) => {
+  const [N, M] = input[0].split(' ').map(Number);
+  const save = Array(M);
+  let ans = '';
 
-  const nums = [];
-
-  for (let i = 1; i <= N; i++) nums.push(i);
-
-  const combi = [];
-
-  const combination = (cur, arr, k, target) => {
-    if (cur.length === target) {
-      combi.push(cur);
+  const dfs = (k, count) => {
+    if (count === M) {
+      ans += `${save.join(' ')}\n`;
       return;
-    } else {
-      for (let i = k; i < arr.length; i++) {
-        const temp = cur.slice(0);
-        temp.push(arr[i]);
-        combination(temp, arr, i + 1, target);
-      }
+    }
+
+    for (let i = k; i < N; i++) {
+      save[count] = i + 1;
+      dfs(i + 1, count + 1);
     }
   };
 
-  combination([], nums, 0, M);
+  dfs(0, 0);
 
-  let answer = "";
-
-  combi.forEach((val) => {
-    answer += `${val.join(" ")}\n`;
-  });
-
-  return answer;
+  console.log(ans.trim());
 };
 
-console.log(solution(input));
+solution(_input);
