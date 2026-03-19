@@ -1,31 +1,33 @@
 const fs = require('fs');
-const { arrayBuffer } = require('stream/consumers');
 const filePath = process.platform === 'linux' ? '/dev/stdin' : './input.txt';
-const input = fs.readFileSync(filePath).toString().trim().split('\n');
+const _input = fs.readFileSync(filePath).toString().trim().split('\n');
 
-let answer = [];
-const combination = (arr, str, k, count)=>{
+const PICK = 6;
 
-    if(count === 6){
-        ans += `${str}\n`;
-        return;
+const solution = (input) => {
+  const arr = [];
+  let ans = '';
+
+  const dfs = (depth, k, len, num) => {
+    if (depth === PICK) {
+      ans += `${arr.join(' ')}\n`;
+      return;
     }
-    else{
-        for(let i = k; i<arr.length;i++){
-            combination(arr, `${str}${arr[i]} ` , i+1, count+1);
-        }
+
+    for (let i = k; i < len; i++) {
+      arr.push(num[i]);
+      dfs(depth + 1, i + 1, len, num);
+      arr.pop();
     }
-}
+  };
 
-let ans = '';
+  for (let i = 0; i < input.length - 1; i++) {
+    const [len, ...num] = input[i].split(' ').map(Number);
+    dfs(0, 0, len, num);
+    ans += `\n`;
+  }
 
-input.forEach((val)=>{
-    if(val[0] != 0){
-        const temp = val.split(' ').map(Number).slice(1);
-        answer = [];
-        combination(temp, '' ,0,0);
-        ans += `\n`;
-    }
-})
+  console.log(ans.trim());
+};
 
-console.log(ans);
+solution(_input);
