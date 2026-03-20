@@ -9,8 +9,13 @@ const solution = (input) => {
 
   const dfs = (depth) => {
     if (depth === N) {
-      const result = egg.filter(([d, w]) => d <= 0);
-      ans = Math.max(ans, result.length);
+      let result = 0;
+
+      egg.forEach(([d, _]) => {
+        if (d <= 0) result++;
+      });
+
+      ans = Math.max(ans, result);
       return;
     }
 
