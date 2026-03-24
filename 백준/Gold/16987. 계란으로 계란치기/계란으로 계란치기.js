@@ -8,41 +8,42 @@ const solution = (input) => {
   let ans = 0;
 
   const dfs = (depth) => {
+    // N에 도달했다는 건 제일 오른쪽 계란을 들고 이 N depth로 진입했다는 것
     if (depth === N) {
-      let result = 0;
-
-      egg.forEach(([d, _]) => {
-        if (d <= 0) result++;
+      let broken = 0;
+      egg.forEach((e) => {
+        if (e[0] <= 0) broken++;
       });
 
-      ans = Math.max(ans, result);
+      ans = Math.max(ans, broken);
       return;
     }
 
-    // 선택한 계란이 깨져 있으면 다음 depth 진행
-
-    const [d, w] = egg[depth];
-
-    if (d <= 0) return dfs(depth + 1);
-
     let hit = false;
 
-    for (let i = 0; i < N; i++) {
-      const [curD, curW] = egg[i];
+    // 만약 손에 든 계란이 깨졌다면 다음으로 진행 아래 for문을 돌면 안되기 때문에 return 해주기
 
-      if (i === depth) continue;
-      if (curD <= 0) continue;
-
-      hit = true;
-
-      egg[i][0] = curD - w;
-      egg[depth][0] = d - curW;
-      dfs(depth + 1);
-      egg[i][0] = curD;
-      egg[depth][0] = d;
+    if (egg[depth][0] <= 0) {
+      return dfs(depth + 1);
     }
 
-    if (!hit) {
+    // 깨지지 않은 계란 선택해서 깨주기
+    for (let i = 0; i < egg.length; i++) {
+      if (depth === i) continue;
+
+      if (egg[i][0] > 0) {
+        hit = true;
+        egg[i][0] -= egg[depth][1];
+        egg[depth][0] -= egg[i][1];
+        dfs(depth + 1);
+        egg[i][0] += egg[depth][1];
+        egg[depth][0] += egg[i][1];
+      }
+    }
+
+    // 만약 아무것도 깨뜨리지 못했다면 다음 진행
+
+    if (hit === false) {
       dfs(depth + 1);
     }
   };
