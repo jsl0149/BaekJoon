@@ -12,31 +12,32 @@ const dc = [-1, 1, 0, 0];
 
 const solution = (input) => {
   const [R, C, k] = input[0].split(' ').map(Number);
-  const info = input.slice(1);
+  const coordinate = input.slice(1);
   const board = Array.from({ length: R }, () => Array(C).fill(0));
   const visited = Array.from({ length: R }, () => Array(C).fill(false));
+  const arr = [];
+  let count = 0;
   let ans = '';
-  let answerCount = 0;
-  let answerArea = [];
 
-  info.forEach((row) => {
-    const [c1, r1, c2, r2] = row.trim().split(' ').map(Number);
+  coordinate.forEach((row) => {
+    const [startC, startR, endC, endR] = row.trim().split(' ').map(Number);
 
-    for (let r = r1; r < r2; r++) {
-      for (let c = c1; c < c2; c++) {
+    for (let r = startR; r < endR; r++) {
+      for (let c = startC; c < endC; c++) {
         board[r][c] = 1;
       }
     }
   });
 
   const bfs = (r, c) => {
-    const queue = [[r, c, 0]];
-    let head = 0;
+    const queue = [[r, c]];
     visited[r][c] = true;
     let area = 0;
+    let head = 0;
 
     while (head < queue.length) {
-      const [curR, curC, dist] = queue[head++];
+      const [curR, curC] = queue[head++];
+
       area++;
 
       for (let i = 0; i < 4; i++) {
@@ -44,12 +45,11 @@ const solution = (input) => {
         const nc = curC + dc[i];
 
         if (nr < 0 || nr >= R || nc < 0 || nc >= C) continue;
-
         if (visited[nr][nc]) continue;
         if (board[nr][nc] === 1) continue;
 
         visited[nr][nc] = true;
-        queue.push([nr, nc, dist + 1]);
+        queue.push([nr, nc]);
       }
     }
 
@@ -59,14 +59,15 @@ const solution = (input) => {
   for (let r = 0; r < R; r++) {
     for (let c = 0; c < C; c++) {
       if (!visited[r][c] && board[r][c] === 0) {
-        answerArea.push(bfs(r, c));
-        answerCount++;
+        const result = bfs(r, c);
+        arr.push(result);
+        count++;
       }
     }
   }
 
-  ans += `${answerCount}\n`;
-  ans += `${answerArea.sort((a, b) => a - b).join(' ')}`;
+  ans += `${count}\n`;
+  ans += `${arr.sort((a, b) => a - b).join(' ')}`;
 
   console.log(ans);
 };
