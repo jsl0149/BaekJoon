@@ -1,88 +1,102 @@
-const { captureRejectionSymbol } = require('events');
 const fs = require('fs');
 const filePath = process.platform === 'linux' ? '/dev/stdin' : './input.txt';
-const input = fs.readFileSync(filePath).toString().trim().split('\n');
+const _input = fs.readFileSync(filePath).toString().trim().split('\n');
 
-const solution = (_input) => {
-  const [N, M] = _input[0].split(' ').map(Number);
-  const data = _input.slice(1);
+const [R, C] = _input[0].split(' ').map(Number);
 
-  const dr = [
-    [0, 0, 0],
-    [1, 2, 3],
-    [0, 1, 1],
-    [0, -1, -2],
-    [0, -1, -2],
-    [-1, 0, 1],
-    [-1, 0, 1],
-    [0, 0, 1],
-  ];
-  const dc = [
-    [1, 2, 3],
-    [0, 0, 0],
-    [1, 0, 1],
-    [1, 0, 0],
-    [-1, 0, 0],
-    [0, 1, 1],
-    [0, -1, -1],
-    [-1, 1, 0],
-  ];
+const dr = [0, 0, -1, 1];
+const dc = [-1, 1, 0, 0];
 
-  const rotate = (_dr, _dc) => {
-    const [r1, r2, r3] = _dr;
-    const [c1, c2, c3] = _dc;
+const BLOCK_NUM = 4;
+const T_SHAPES = [
+  [
+    [0, 0],
+    [0, -1],
+    [0, 1],
+    [1, 0],
+  ],
+  [
+    [0, 0],
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+  ],
+  [
+    [0, 0],
+    [0, -1],
+    [0, 1],
+    [-1, 0],
+  ],
+  [
+    [0, 0],
+    [-1, 0],
+    [1, 0],
+    [0, 1],
+  ],
+];
 
-    dr.push([-c1, -c2, -c3]);
-    dc.push([r1, r2, r3]);
+function check(r, c, b) {
+  let area = 0;
 
-    dr.push([-r1, -r2, -r3]);
-    dc.push([-c1, -c2, -c3]);
+  T_SHAPES.forEach((shape) => {
+    let count = 0;
 
-    dr.push([c1, c2, c3]);
-    dc.push([-r1, -r2, -r3]);
-  };
+    for (const [dr, dc] of shape) {
+      const nr = r + dr;
+      const nc = c + dc;
 
-  for (let i = 3; i <= 7; i++) {
-    rotate(dr[i], dc[i]);
-  }
-
-  const map = [];
-
-  data.forEach((val) => {
-    const row = val.split(' ').map(Number);
-    map.push(row);
-  });
-
-  const search = (r, c) => {
-    let max = 0;
-
-    for (let i = 0; i < dr.length; i++) {
-      let total = map[r][c];
-
-      for (let j = 0; j < dr[i].length; j++) {
-        const nr = r + dr[i][j];
-        const nc = c + dc[i][j];
-
-        if (nr < 0 || nr >= N || nc < 0 || nc >= M) break;
-
-        total += map[nr][nc];
+      if (nr < 0 || nr >= R || nc < 0 || nc >= C) {
+        count = 0;
+        break;
       }
 
-      max = Math.max(max, total);
+      count += b[nr][nc];
     }
 
-    return max;
+    area = Math.max(area, count);
+  });
+
+  return area;
+}
+
+const solution = (input) => {
+  const board = input.slice(1).map((row) => row.trim().split(' ').map(Number));
+  const visited = Array.from({ length: R }, () => Array(C).fill(false));
+
+  let ans = 0;
+
+  const dfs = (r, c, depth, total) => {
+    if (depth === BLOCK_NUM - 1) {
+      ans = Math.max(ans, total);
+      return;
+    }
+
+    for (let i = 0; i < 4; i++) {
+      const nr = r + dr[i];
+      const nc = c + dc[i];
+
+      if (nr < 0 || nr >= R || nc < 0 || nc >= C) continue;
+      if (visited[nr][nc]) continue;
+
+      visited[nr][nc] = true;
+      dfs(nr, nc, depth + 1, total + board[nr][nc]);
+      visited[nr][nc] = false;
+    }
   };
 
-  let answer = 0;
+  for (let r = 0; r < R; r++) {
+    for (let c = 0; c < C; c++) {
+      // T자형 체크
+      ans = Math.max(check(r, c, board), ans);
 
-  for (let i = 0; i < N; i++) {
-    for (let j = 0; j < M; j++) {
-      answer = Math.max(answer, search(i, j));
+      // 이외 타입 체크
+      visited[r][c] = true;
+      dfs(r, c, 0, board[r][c]);
+      visited[r][c] = false;
     }
   }
 
-  return answer;
+  console.log(ans);
 };
 
-console.log(solution(input));
+solution(_input);
